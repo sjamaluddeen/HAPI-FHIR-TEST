@@ -41,8 +41,6 @@
 
     </dependencies>
 
-    <packaging>war</packaging>
-
     <name>HAPI FHIR JPA Server - Starter Project</name>
 
     <repositories>
@@ -65,7 +63,7 @@
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty_version}</version>
+                <version>9.4.31.v20200723</version>
                 <configuration>
                     <webApp>
                         <contextPath>/hapi-fhir-jpaserver</contextPath>
@@ -85,7 +83,7 @@
             </plugin>
 
             <!-- The configuration here tells the WAR plugin to include the FHIR Tester overlay. You can omit it if you are not using that feature. -->
-            <plugin>
+            <!--plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
@@ -102,12 +100,13 @@
                     </overlays>
                     <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
                 </configuration>
-            </plugin>
+            </plugin-->
 
             <!-- This is to run the integration tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.0.0-M5</version>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
@@ -124,6 +123,7 @@
             <plugin>
                 <groupId>org.basepom.maven</groupId>
                 <artifactId>duplicate-finder-maven-plugin</artifactId>
+                <version>1.4.0</version>
                 <executions>
                     <execution>
                         <id>default</id>
