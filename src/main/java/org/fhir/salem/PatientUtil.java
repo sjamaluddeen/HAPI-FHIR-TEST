@@ -1,6 +1,7 @@
 package org.fhir.salem;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.api.CacheControlDirective;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.ICriterion;
 import ca.uhn.fhir.rest.gclient.IParam;
@@ -24,12 +25,13 @@ public class PatientUtil {
      * @return {@link Bundle} object to allow caller to process the result
      */
 
-    public static Bundle search(IGenericClient client, ICriterion<?> critirion, IParam sortBy){
+    public static Bundle search(IGenericClient client, ICriterion<?> critirion, IParam sortBy,boolean noCache){
         return client.search()
         .forResource("Patient")
         .where(critirion)
         .sort().ascending(sortBy)
         .returnBundle(Bundle.class)
+        .cacheControl(new CacheControlDirective().setNoCache(noCache))
         .execute();
     }
 

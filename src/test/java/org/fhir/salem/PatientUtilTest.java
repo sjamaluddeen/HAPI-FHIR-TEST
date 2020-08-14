@@ -1,6 +1,7 @@
 package org.fhir.salem;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.api.CacheControlDirective;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.*;
 import ca.uhn.fhir.util.BundleUtil;
@@ -11,6 +12,7 @@ import org.hl7.fhir.r4.model.StringType;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.api.mockito.PowerMockito;
@@ -23,7 +25,6 @@ import static org.mockito.Mockito.*;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(BundleUtil.class)
 public class PatientUtilTest {
-
     /**
      * this test asserts that the IGenericClient searches for Patient resources using the passed critirion
      * sorted asscendingly by the given IParam
@@ -36,19 +37,24 @@ public class PatientUtilTest {
         ICriterion iCriterion = mock(ICriterion.class);
         ISort iSort = mock(ISort.class);
         IParam iParam  = mock(IParam.class);
+        Boolean noCache = PowerMockito.mock(Boolean.class);
         when(client.search()).thenReturn(iUntypedQuery);
         when(iUntypedQuery.forResource("Patient")).thenReturn(iQuery);
         when(iQuery.where(iCriterion)).thenReturn(iQuery);
         when(iQuery.sort()).thenReturn(iSort);
         when(iSort.ascending(iParam)).thenReturn(iQuery);
         when(iQuery.returnBundle(Bundle.class)).thenReturn(iQuery);
-        PatientUtil.search(client,iCriterion,iParam);
+        when(iQuery.cacheControl(any())).thenReturn(iQuery);
+        PatientUtil.search(client,iCriterion,iParam,noCache.booleanValue());
         verify(iUntypedQuery,times(1)).forResource("Patient");
         verify(client,times(1)).search();
         verify(iQuery,times(1)).where(iCriterion);
         verify(iQuery,times(1)).sort();
         verify(iSort,times(1)).ascending(iParam);
         verify(iQuery,times(1)).returnBundle(Bundle.class);
+        ArgumentCaptor<CacheControlDirective> argument = ArgumentCaptor.forClass(CacheControlDirective.class);
+        verify(iQuery,times(1)).cacheControl(argument.capture());
+        Assert.assertEquals("passed noCache value did not match what used in the request",noCache.booleanValue(), argument.getValue().isNoCache());
         verify(iQuery,times(1)).execute();
     }
 

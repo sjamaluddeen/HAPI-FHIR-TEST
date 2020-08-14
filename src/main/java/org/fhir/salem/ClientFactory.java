@@ -11,7 +11,7 @@ import java.net.URL;
  */
 public class ClientFactory {
 
-    /** A method that calls an {@link IGenericClient}
+    /** A method that creates an {@link IGenericClient} client
      * @param context the context the will create the client
      * @param url the URL to which client will be sending requests
      * @return the created client
